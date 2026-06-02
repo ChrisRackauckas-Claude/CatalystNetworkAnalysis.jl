@@ -1,4 +1,4 @@
-name: FormatCheck
+name: SpellCheck
 on:
   push:
     branches:
@@ -9,7 +9,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 jobs:
-  runic:
-    name: "Runic"
-    uses: "SciML/.github/.github/workflows/runic.yml@v1"
+  spellcheck:
+    name: "SpellCheck"
+    uses: "SciML/.github/.github/workflows/spellcheck.yml@v1"
     secrets: "inherit"

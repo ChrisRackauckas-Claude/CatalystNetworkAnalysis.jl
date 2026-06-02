@@ -1,0 +1,15 @@
+[files]
+# Third-party SBML model data and generated manifests are not prose.
+extend-exclude = [
+    "test/mass-action-networks/*.xml",
+    "**/Manifest.toml",
+]
+
+[default.extend-words]
+# Biochemical / domain identifiers, journal-name abbreviations, and Julia stdlib names
+# that the spell checker flags as typos.
+WNT = "WNT"        # Wnt signaling pathway protein
+Pase = "Pase"      # phosphatase enzyme suffix (e.g. KKPase)
+indexin = "indexin"  # Julia Base.indexin
+Commun = "Commun"  # "Nat Commun" journal abbreviation
+Comput = "Comput"  # "PLoS Comput Biol" journal abbreviation
