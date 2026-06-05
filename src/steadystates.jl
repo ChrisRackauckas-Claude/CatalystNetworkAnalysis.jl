@@ -191,7 +191,7 @@ function SFR(rn::ReactionSystem; u0::VarMapType = Dict(), p::VarMapType = Dict()
     if !isempty(u0)
         (length(u0) != length(specs)) &&
             error("Length of initial condition does not equal number of species.")
-        u0 = symmap_to_varmap(rn, u0)
+        u0 = Catalyst.symmap_to_varmap(rn, u0)
         cons_constants = Catalyst.conservationlaw_constants(rn)
         Γ_vals = Vector{Float64}()
         for conseq in cons_constants
@@ -205,7 +205,7 @@ function SFR(rn::ReactionSystem; u0::VarMapType = Dict(), p::VarMapType = Dict()
 
     # Substitute parameters.
     if !isempty(p)
-        p = symmap_to_varmap(rn, p)
+        p = Catalyst.symmap_to_varmap(rn, p)
         (length(p) != length(parameters(rn))) &&
             error("Length of parameter assignments does not equal number of parameters.")
         for i in 1:length(sfr)
@@ -232,7 +232,7 @@ function modifiedSFR(rn::ReactionSystem, u0::VarMapType; p::VarMapType = Dict())
 
     sm = speciesmap(rn)
     u0vec = zeros(length(species(rn)))
-    u0 = symmap_to_varmap(rn, Dict(u0))
+    u0 = Catalyst.symmap_to_varmap(rn, Dict(u0))
     for spec in keys(sm)
         i = sm[spec]
         u0vec[i] = u0[spec]
