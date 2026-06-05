@@ -194,7 +194,7 @@ function construct_rr_graph(rn::ReactionSystem)
 
         # Prevent subcycles.
         for n in 2:floor(Int, l / 2)
-            for idxs in combinations(supp, n)
+            for idxs in Combinatorics.combinations(supp, n)
                 @constraint(model, sum(edge[idxs, idxs]) <= n - 1)
             end
         end
