@@ -88,7 +88,7 @@ let
     end
 
     translation = C.WRDZ_translation(zigzag)
-    #@test translation.Y_T * translation.D_T == netstoichmat(zigzag)
+    @test translation.Y_T * translation.D_T == netstoichmat(zigzag)
     @test C.effectivedeficiency(translation) == 0
     @test C.isweaklyreversible(translation)
 end
