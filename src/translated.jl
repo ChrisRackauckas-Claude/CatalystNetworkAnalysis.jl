@@ -40,7 +40,6 @@ function WRDZ_translation(rn::ReactionSystem)
     isnothing(rr_adj) && return nothing
 
     Y_K = complexstoichmat(rn)
-    Y_T = copy(Y_K)
     D = incidencemat(rn, sparse = true)
 
     nums = size(Y_K, 1)
@@ -83,34 +82,33 @@ function WRDZ_translation(rn::ReactionSystem)
         !isempty(P1) && @goto step_2
         break
     end
-    display(Λ)
+    # Each reaction i is translated by adding the complex Λ[:, i] to both its
+    # source and product. A complex shared by reactions with different
+    # translations therefore splits into distinct translated complexes, so the
+    # translated complexes are built from the per-reaction endpoints rather than
+    # by shifting each original complex once.
+    transl_src = [Y_K[:, rcmap[i].first] .+ Λ[:, i] for i in 1:numr]
+    transl_prd = [Y_K[:, rcmap[i].second] .+ Λ[:, i] for i in 1:numr]
 
-    # Update the Y_T by adding the translation complexes
-    translated = Set{Int}()
+    complexes = unique(vcat(transl_src, transl_prd))
+    _Y_T = reduce(hcat, complexes)
+
+    D_T = zeros(Int, length(complexes), numr)
     for i in 1:numr
-        s = rcmap[i].first
-        p = rcmap[i].second
-
-        s ∈ translated || @. Y_T[:, s] += Λ[:, i]
-        p ∈ translated || @. Y_T[:, p] += Λ[:, i]
-        push!(translated, s, p)
+        D_T[findfirst(==(transl_src[i]), complexes), i] = -1
+        D_T[findfirst(==(transl_prd[i]), complexes), i] = 1
     end
 
-    _Y_T = reduce(hcat, unique(eachcol(Y_T)))
-    display(_Y_T)
-
+    # Map each original complex to a translated complex by its first appearance
+    # as a reaction endpoint (a complex that splits keeps one representative).
     translatedcmap = zeros(Int, numc)
-    for i in 1:numc
-        j = findfirst(==(Y_T[:, i]), eachcol(_Y_T))
-        translatedcmap[i] = j
-    end
-
-    D_T = zeros(Int, size(_Y_T, 2), numr)
     for i in 1:numr
         s = rcmap[i].first
         p = rcmap[i].second
-        D_T[translatedcmap[s], i] = -1
-        D_T[translatedcmap[p], i] = 1
+        translatedcmap[s] == 0 &&
+            (translatedcmap[s] = findfirst(==(transl_src[i]), complexes))
+        translatedcmap[p] == 0 &&
+            (translatedcmap[p] = findfirst(==(transl_prd[i]), complexes))
     end
 
     # If any final complexes are not non-negative, add a pseudo-complex to each member of the linkage class
