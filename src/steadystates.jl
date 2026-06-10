@@ -20,7 +20,7 @@ end
 
     Mixed volume may take a very long time to run and is disabled by default. It can be enabled by setting the flag `mv = true`. Note that mixed volume requires an initial condition. 
 """
-function networksummary(rn::ReactionSystem; p::VarMapType = rn.defaults, u0::VarMapType = Dict(), mv = false)
+function networksummary(rn::ReactionSystem; p::VarMapType = Catalyst.defaults(rn), u0::VarMapType = Dict(), mv = false)
     all(r -> ismassaction(r, rn), reactions(rn)) ||
         error("The network summary analysis currently only works for mass-action networks with integer coefficients.")
 
