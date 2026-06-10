@@ -1,5 +1,13 @@
 VarMapType = Union{Vector{P}, Dict, Tuple{P}} where {P <: Pair}
 
+# Catalyst ≥ 16 (ModelingToolkitBase) replaced the system `defaults` field with
+# `initial_conditions`; older Catalyst exposes the defaults dict via `rn.defaults`.
+@static if isdefined(Catalyst, :initial_conditions)
+    systemdefaults(rn::ReactionSystem) = Dict(Catalyst.initial_conditions(rn))
+else
+    systemdefaults(rn::ReactionSystem) = rn.defaults
+end
+
 # Struct summarizing the dynamic information of the reaction network, including its capacity for
 # multiple equilibria, concentration robustness, and persistence.
 mutable struct NetworkSummary
@@ -20,7 +28,7 @@ end
 
     Mixed volume may take a very long time to run and is disabled by default. It can be enabled by setting the flag `mv = true`. Note that mixed volume requires an initial condition. 
 """
-function networksummary(rn::ReactionSystem; p::VarMapType = Catalyst.defaults(rn), u0::VarMapType = Dict(), mv = false)
+function networksummary(rn::ReactionSystem; p::VarMapType = systemdefaults(rn), u0::VarMapType = Dict(), mv = false)
     all(r -> ismassaction(r, rn), reactions(rn)) ||
         error("The network summary analysis currently only works for mass-action networks with integer coefficients.")
 
