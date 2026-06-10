@@ -1,5 +1,7 @@
 using Pkg
 using SafeTestsets, Test
+using CatalystNetworkAnalysis
+using UnPack, SBMLImporter, SBMLToolkit
 
 const GROUP = get(ENV, "GROUP", "All")
 
@@ -15,9 +17,6 @@ function activate_qa_env()
 end
 
 if GROUP == "All" || GROUP == "Core"
-    using CatalystNetworkAnalysis
-    using UnPack, SBMLImporter, SBMLToolkit
-
     @testset "CatalystNetworkAnalysis.jl" begin
         @time @safetestset "Concentration Robustness" begin
             include("ACR.jl")
