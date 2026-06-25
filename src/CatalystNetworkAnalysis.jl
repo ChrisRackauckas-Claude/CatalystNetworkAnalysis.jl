@@ -1,7 +1,5 @@
 module CatalystNetworkAnalysis
 
-using PrecompileTools: @setup_workload, @compile_workload
-
 using Catalyst
 using Satisfiability # For siphon detection
 

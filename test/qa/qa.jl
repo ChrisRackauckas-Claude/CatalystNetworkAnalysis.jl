@@ -1,26 +1,49 @@
-using CatalystNetworkAnalysis, Aqua, JET
+using SciMLTesting, CatalystNetworkAnalysis, JET
 using Test
 
-@testset "Aqua" begin
-    # undefined_exports, stale_deps and the deps_compat extras check disabled:
-    # genuine findings tracked in https://github.com/SciML/CatalystNetworkAnalysis.jl/issues/70
-    # (marked @test_broken below). All other Aqua sub-checks still run and pass.
-    Aqua.test_all(
-        CatalystNetworkAnalysis;
-        undefined_exports = false,
-        stale_deps = false,
-        deps_compat = (check_extras = false,),
-    )
-    @test_broken false  # Aqua undefined_exports: symbolic_steady_states — tracked in https://github.com/SciML/CatalystNetworkAnalysis.jl/issues/70
-    @test_broken false  # Aqua stale_deps: ReactionNetworkImporters, PolynomialRoots, ModelingToolkit, SBMLToolkit — tracked in https://github.com/SciML/CatalystNetworkAnalysis.jl/issues/70
-    @test_broken false  # Aqua deps_compat extras: Pkg missing [compat] — tracked in https://github.com/SciML/CatalystNetworkAnalysis.jl/issues/70
-end
-
-@testset "JET" begin
-    # JET reports genuine errors (Nemo.ZZMatrix no-matching-method, undefined
-    # bindings) tracked in https://github.com/SciML/CatalystNetworkAnalysis.jl/issues/70 —
-    # run in report mode and @test_broken the assertion so QA stays green and
-    # auto-flags once fixed.
-    rep = JET.report_package(CatalystNetworkAnalysis; target_defined_modules = true)
-    @test_broken isempty(JET.get_reports(rep))  # JET: 12 possible errors — tracked in https://github.com/SciML/CatalystNetworkAnalysis.jl/issues/70
-end
+# deps_compat keeps deps/weakdeps/julia checks running but disables the extras
+# check: no [compat] for the `Pkg` extra — tracked in
+# https://github.com/SciML/CatalystNetworkAnalysis.jl/issues/70
+#
+# aqua_broken sub-checks (tracked in issue #70):
+#   undefined_exports: symbolic_steady_states exported but flagged undefined
+#   stale_deps: ReactionNetworkImporters, PolynomialRoots, ModelingToolkit, SBMLToolkit
+#
+# jet_broken: ~14 possible errors (report mode + @test_broken) — issue #70
+#
+# ExplicitImports:
+#   no_implicit_imports is ei_broken — the package `using`s several large
+#   dependencies (Catalyst, Oscar, JuMP, Graphs, DynamicPolynomials,
+#   Satisfiability, ...) and relies on ~75 of their exported names implicitly;
+#   making every one explicit is a large refactor tracked in issue #70.
+#   The qualified-access ignore-lists below are names that are not public in
+#   their *source* packages (other people's packages) but are accessed
+#   intentionally via Mod.name; ignored per ExplicitImports' public-API checks.
+run_qa(
+    CatalystNetworkAnalysis;
+    explicit_imports = true,
+    # jet_broken uses report_package; match the original invocation
+    # (target_defined_modules only, no target_modules narrowing) so the genuine
+    # ~14 reports are still surfaced as @test_broken rather than filtered out.
+    jet_kwargs = (; target_defined_modules = true),
+    aqua_kwargs = (; deps_compat = (check_extras = false,)),
+    aqua_broken = (:undefined_exports, :stale_deps),
+    jet_broken = true,
+    ei_kwargs = (;
+        # BasicSymbolic is owned by SymbolicUtils, re-exported by Symbolics.
+        all_qualified_accesses_via_owners = (; ignore = (:BasicSymbolic,)),
+        all_qualified_accesses_are_public = (;
+            ignore = (
+                :BasicSymbolic,        # SymbolicUtils (via Symbolics)
+                :Library,              # CDDLib
+                :Optimizer,            # HiGHS
+                :assemble_oderhs,      # Catalyst
+                :cycles,               # Catalyst
+                :get_networkproperties, # Catalyst
+                :n_positive_roots,     # Hecke
+                :symmap_to_varmap,     # Catalyst
+            ),
+        ),
+    ),
+    ei_broken = (:no_implicit_imports,),
+)
