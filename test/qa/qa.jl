@@ -30,8 +30,6 @@ run_qa(
     aqua_broken = (:undefined_exports, :stale_deps),
     jet_broken = true,
     ei_kwargs = (;
-        # BasicSymbolic is owned by SymbolicUtils, re-exported by Symbolics.
-        all_qualified_accesses_via_owners = (; ignore = (:BasicSymbolic,)),
         all_qualified_accesses_are_public = (;
             ignore = (
                 :Library,              # CDDLib
