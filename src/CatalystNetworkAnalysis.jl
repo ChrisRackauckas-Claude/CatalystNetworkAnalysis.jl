@@ -21,6 +21,8 @@ using MixedSubdivisions, DynamicPolynomials
 using Polyhedra
 import CDDLib
 
+import SymbolicUtils
+
 include("persistence.jl")
 export ispersistent, minimalsiphons, iscritical, isconservative, isconsistent
 include("concordance.jl")

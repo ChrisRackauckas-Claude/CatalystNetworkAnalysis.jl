@@ -133,7 +133,7 @@ function ratematrix(rs::ReactionSystem, rates::Vector{T} = reactionrates(rs)) wh
     complexes, D = reactioncomplexes(rs)
     n = length(complexes)
     rxns = reactions(rs)
-    ratematrix = (T <: Symbolics.BasicSymbolic) ? zeros(Any, n, n) : zeros(T, n, n)
+    ratematrix = (T <: SymbolicUtils.BasicSymbolic) ? zeros(Any, n, n) : zeros(T, n, n)
 
     for r in 1:length(rxns)
         rxn = rxns[r]

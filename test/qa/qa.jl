@@ -34,7 +34,6 @@ run_qa(
         all_qualified_accesses_via_owners = (; ignore = (:BasicSymbolic,)),
         all_qualified_accesses_are_public = (;
             ignore = (
-                :BasicSymbolic,        # SymbolicUtils (via Symbolics)
                 :Library,              # CDDLib
                 :Optimizer,            # HiGHS
                 :assemble_oderhs,      # Catalyst
