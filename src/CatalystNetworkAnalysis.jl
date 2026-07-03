@@ -1,7 +1,5 @@
 module CatalystNetworkAnalysis
 
-using PrecompileTools: @setup_workload, @compile_workload
-
 using Catalyst
 using Satisfiability # For siphon detection
 
@@ -22,6 +20,8 @@ using SparseArrays
 using MixedSubdivisions, DynamicPolynomials
 using Polyhedra
 import CDDLib
+
+import SymbolicUtils
 
 include("persistence.jl")
 export ispersistent, minimalsiphons, iscritical, isconservative, isconsistent
