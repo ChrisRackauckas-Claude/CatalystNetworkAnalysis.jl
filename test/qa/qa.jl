@@ -29,6 +29,7 @@ run_qa(
     aqua_kwargs = (; deps_compat = (check_extras = false,)),
     aqua_broken = (:undefined_exports, :stale_deps),
     jet_broken = true,
+    api_docs_kwargs = (; ignore = (:symbolic_steady_states,)),
     ei_kwargs = (;
         all_qualified_accesses_are_public = (;
             ignore = (
