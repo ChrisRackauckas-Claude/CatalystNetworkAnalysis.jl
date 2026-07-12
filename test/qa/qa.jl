@@ -6,7 +6,6 @@ using Test
 # https://github.com/SciML/CatalystNetworkAnalysis.jl/issues/70
 #
 # aqua_broken sub-checks (tracked in issue #70):
-#   undefined_exports: symbolic_steady_states exported but flagged undefined
 #   stale_deps: ReactionNetworkImporters, PolynomialRoots, ModelingToolkit, SBMLToolkit
 #
 # jet_broken: ~14 possible errors (report mode + @test_broken) — issue #70
@@ -27,9 +26,9 @@ run_qa(
     # ~14 reports are still surfaced as @test_broken rather than filtered out.
     jet_kwargs = (; target_defined_modules = true),
     aqua_kwargs = (; deps_compat = (check_extras = false,)),
-    aqua_broken = (:undefined_exports, :stale_deps),
+    aqua_broken = (:stale_deps,),
     jet_broken = true,
-    api_docs_kwargs = (; ignore = (:symbolic_steady_states,)),
+    api_docs_kwargs = (; rendered = true),
     ei_kwargs = (;
         all_qualified_accesses_are_public = (;
             ignore = (
