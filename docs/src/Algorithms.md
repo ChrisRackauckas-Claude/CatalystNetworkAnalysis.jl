@@ -41,6 +41,7 @@ CatalystNetworkAnalysis.hasuniquesteadystates
 # Catalyst.iscomplexbalanced
 # Catalyst.isdetailedbalanced
 CatalystNetworkAnalysis.mixedvolume
+SFR
 isconcordant
 deficiencyonealgorithm
 ```
@@ -60,6 +61,9 @@ It is not currently possible to conclusively determine persistence in every case
 ```@docs
 ispersistent
 minimalsiphons
+iscritical
+isconservative
+isconsistent
 ```
 
 The Petri net algorithm relies on detecting siphons in the network, which follows a SAT-solver approach[^5] [^6].
@@ -75,6 +79,13 @@ Like persistence, absolute concentration robustness currently cannot be detected
 
 ```@docs
 isconcentrationrobust
+```
+
+## Network Translation and Flux Modes
+
+```@docs
+elementary_flux_modes
+WRDZ_translation
 ```
 
 Misc references[^9] [^10] [^11] [^12] [^13] [^14] [^15] [^16] [^17] [^18].

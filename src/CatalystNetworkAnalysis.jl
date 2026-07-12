@@ -40,6 +40,6 @@ include("cycles.jl")
 export elementary_flux_modes
 
 include("translated.jl")
-export WRDZ_translation, symbolic_steady_states
+export WRDZ_translation
 
 end
